@@ -29,6 +29,16 @@ def calculeazaFROM(a, l, d, value):
 
     return float(format(a + value * d, f'.{l}f'))
 
+def codeConditions(a, b, p):
+    # trebuie sa stabilim param de discretizare
+    # l = nr de biti folositi pentru a reprezenta numerele
+    l = ceil(log2((b - a)*(10**p)))
+
+    # d pasul de discretizare pentru intervalul [a, b]
+    d = (b - a)/(2**l)
+
+    return l, d
+
 def main():
     result = []
 
@@ -40,12 +50,7 @@ def main():
     p = int(input())
     m = int(input())
 
-    # trebuie sa stabilim param de discretizare
-    # l = nr de biti folositi pentru a reprezenta numerele
-    l = ceil(log2((b - a)*(10**p)))
-
-    # d pasul de discretizare pentru intervalul [a, b]
-    d = (b - a)/(2**l)
+    l, d = codeConditions(a, b, p)
 
     for _ in range(m):
         message = input()
