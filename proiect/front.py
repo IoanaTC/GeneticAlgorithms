@@ -1,5 +1,7 @@
 from tkinter import *
 from main import main
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 master = Tk()
 master.title("GA")
@@ -21,6 +23,17 @@ def get_values():
     generatii = int(etape.get())
 
     main(populatie, domeniu_a, domeniu_b, a, b, c, precizie, crossover, mutatie, generatii)
+    # x_vals = [1, 2, 3, 4, 5]
+    # y_vals = [5, 4, 3, 2, 1]
+
+    # # plot the data
+    # fig = plt.Figure(figsize=(4, 4), dpi=100)
+    # fig.subplots_adjust(left=0.1, bottom=0.1, right=0.9, top=0.9, wspace=0.4, hspace=0.4)
+    # plot1 = fig.add_subplot(111)
+    # plot1.plot(x_vals, y_vals)
+    
+    # canvas = FigureCanvasTkAgg(fig, master)
+    # canvas.get_tk_widget().grid(row=9, column=1, columnspan=4)
 
 
 Label(master, text='Algoritmi Genetici', font=20).grid(row=0)
