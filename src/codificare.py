@@ -4,24 +4,9 @@ def calculeazaTO(a, l, d, value):
     # pentru value - nr real, trebuie gasit index-ul bin-ului de lungime d
     # cuprins in intervalul [a, b], in care acesta se afla
     # si transformat in sir binar
-    index = None
-    no_of_bins = 2**l
-
-    # cautare binara a capatului din stanga al fiecarui bin, avand pasul d 
-    left = a
-    right = a + (no_of_bins - 1) * d
-
-    while left < right:
-        mij = left + ((right - a) - (left - a)) / 2
-
-        if value > mij:
-            left = mij + d
-            index = (left - a) / d
-        else:
-            right = mij - d
 
     # formatare rezultat: sir binar de lungime l
-    result = floor(index)
+    result = floor((value - a) / d)
     return bin(result)[2:].zfill(l)
 
 def calculeazaFROM(a, l, d, value):
