@@ -5,7 +5,18 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 master = Tk()
 master.title("GA")
-master.geometry("800x250")
+width= master.winfo_screenwidth()
+height= master.winfo_screenheight()
+master.geometry("%dx%d" % (width, height))
+
+def plot_data(x_vals, y_vals):
+    fig = plt.Figure(figsize=(5, 5), dpi=100)
+    plot1 = fig.add_subplot(111)
+    plot1.plot(x_vals, y_vals)
+
+    canvas = FigureCanvasTkAgg(fig, master)
+    canvas.get_tk_widget().grid(row=9, column=1, columnspan=7)
+
 
 def get_values():
     populatie = int(dimensiuneaPopulatiei.get())
@@ -22,18 +33,13 @@ def get_values():
     mutatie = float(mutatieProbabilitate.get())
     generatii = int(etape.get())
 
-    main(populatie, domeniu_a, domeniu_b, a, b, c, precizie, crossover, mutatie, generatii)
-    # x_vals = [1, 2, 3, 4, 5]
-    # y_vals = [5, 4, 3, 2, 1]
+    print(precizie, crossover, mutatie, generatii)
+    maximum = main(populatie, domeniu_a, domeniu_b, a, b, c, precizie, crossover, mutatie, generatii)
+    y_vals = maximum
+    # print(y_vals)
+    x_vals = [i for i in range(generatii)]
 
-    # # plot the data
-    # fig = plt.Figure(figsize=(4, 4), dpi=100)
-    # fig.subplots_adjust(left=0.1, bottom=0.1, right=0.9, top=0.9, wspace=0.4, hspace=0.4)
-    # plot1 = fig.add_subplot(111)
-    # plot1.plot(x_vals, y_vals)
-    
-    # canvas = FigureCanvasTkAgg(fig, master)
-    # canvas.get_tk_widget().grid(row=9, column=1, columnspan=4)
+    plot_data(x_vals, y_vals)
 
 
 Label(master, text='Algoritmi Genetici', font=20).grid(row=0)

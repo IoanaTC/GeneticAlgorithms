@@ -1,0 +1,39 @@
+Evolutie.txt
+
+Populatia initiala:
+      0: 1101100111011110111000 x = 1.5531713904855975 f = 1.1408300222626333
+      1: 1110110111100111111001 x = 1.7879593245368688 f = 0.5911607783385326
+
+Pobabilitati selectie:
+cromozom      0 probabilitate 0.6586813
+cromozom      1 probabilitate 0.3413187
+
+Intervale probabilitati selectie:
+
+0.0    0.6586813    1.0    
+
+u = 0.662719389459852 selectam cromozomul 0
+
+
+Dupa selectie:
+      0: 1101100111011110111000 x = 1.5531713904855975 f = 1.1408300222626333
+
+
+Probabilitatea de incrucisare 0.25: 
+      0: 1101100111011110111000 u = 0.6793668706030014
+Recombinarea cu el insusi denota acelasi rezultat
+
+
+Dupa recombinare:
+      0: 1101100111011110111000 x = 1.5531713904855975 f = 1.1408300222626333
+
+
+Probabilitate de mutatie pentru fiecare gena 1
+Au fost modificati cromozomii:
+0
+
+Dupa mutatie: 
+      0: 0010011000100001000111 x = -0.5531718730926514 f = 1.1408290057265162
+
+Evolutia maximului: 
+1.1408300222626333

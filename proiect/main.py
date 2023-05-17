@@ -70,12 +70,25 @@ def crossover(cromozom1, cromozom2, punctRupere):
 
     return result1, result2
 
-def main(population = 50, a = -1, b = 2, coef_a=-1, coef_b=1, coef_c=2, precision=6, crossoverProbability=0.25, mutationProbability=0.01, epochs=10):
+def main(population, a, b, coef_a, coef_b, coef_c, precision, crossoverProbability, mutationProbability, epochs):
+    file_path = "Evolutie.txt"
+    f = open(file_path, "w")
+
+    f.write(file_path)
+    f.write("\n\nPopulatia initiala:\n")
+
+    maximum = []
+
     def executeCrossover(element1, element2):
         punctRupere = random.randint(0, binaryStringlength - 1)
 
         candidate1, candidate2 = newGeneration[element1][2], newGeneration[element2][2]
         result1, result2 = crossover(candidate1, candidate2, punctRupere)
+
+        if ok == 0:
+            f.write(f"\nRecombinare intre cromozomul {element1} cu {element2}\n")
+            f.write(f"{candidate1}        {candidate2}  punct {punctRupere}\n")
+            f.write(f"Rezultat:  {result1}        {result2}\n")
 
         # actualizare date generatie
         result1 = (calculeazaFROM(a, binaryStringlength, sizeOfBin, result1),
@@ -86,20 +99,26 @@ def main(population = 50, a = -1, b = 2, coef_a=-1, coef_b=1, coef_c=2, precisio
                                     result2)
         
         return result1, result2
+    
     def executeMutation(element):
+        modified = False
         string = newGeneration[element][2]
-        pozitie = int(random.randint(0, binaryStringlength - 1))
 
-        result = string[:pozitie] + str(1 - int(string[pozitie])) + string[pozitie + 1:]
-        return (calculeazaFROM(a, binaryStringlength, sizeOfBin, result),
-                                    fitness(newGeneration[element][0], coef_a, coef_b, coef_c),
-                                    result)
+        result = string
+        for pozitie, gene in enumerate(list(string)):
+            probability = random.uniform(0, 1)
+            if probability <= mutationProbability:
+                result = result[:pozitie] + str(1 - int(result[pozitie])) + result[pozitie + 1:]
+                modified = True
+                
+        newValue = calculeazaFROM(a, binaryStringlength, sizeOfBin, result)
+        return (newValue, fitness(newValue, coef_a, coef_b, coef_c), result), modified
     
     def executeSelection(probability):
         # Gasim bin-ul in care se incadreaza probabilitatea si 
         # trecem idndividul corespunzator in generatia urmatoare
         left = 0
-        right = population
+        right = population - 1
 
         while left < right:
             mij = left + (right - left) // 2
@@ -119,17 +138,17 @@ def main(population = 50, a = -1, b = 2, coef_a=-1, coef_b=1, coef_c=2, precisio
     newGeneration = {i: (initialSample[i], fitness(initialSample[i], coef_a, coef_b, coef_c), 
                          calculeazaTO(a, binaryStringlength, sizeOfBin, initialSample[i])) for i in range(population)}
 
-    
+    for index, individual in enumerate(newGeneration.values()):
+        f.write(f"      {index}: {individual[2]} x = {individual[0]} f = {individual[1]}\n")
+
+    f.write("\nPobabilitati selectie:\n")
+
     # Timp de un nr de generatii dat de epochs, vom simula evolutia indivizilor generati in initialSample
-    for _ in range(epochs):
+    for ok in range(epochs):
         oldGeneration = newGeneration
         # Crearea unei noi generatii pornind de la cea precedenta
         newGeneration = {}
-
-        # criteriul elitist, gasirea individului cu cea mai mare valoare a functiei de fit
         individualIndex = 0
-        eliteIndividual = max(oldGeneration.items(), key=lambda x : x[1][1])
-        newGeneration[individualIndex] =  eliteIndividual[1]
         # Am trecut automat individul cu functia de fit cea mai mare in generatia urmatoare
         # pentru a asigura cel putin egalitatea intre generatii
         population -= 1
@@ -140,46 +159,109 @@ def main(population = 50, a = -1, b = 2, coef_a=-1, coef_b=1, coef_c=2, precisio
         # generarea unui nr de probabilitati de selectie = populatia fara individul elitist
         individualProbability = generateIndividualProbability(population)
 
+        if ok == 0:
+            for  index, interval in enumerate(fitnessIntervals[1:]):
+                f.write(f"cromozom      {index} probabilitate {fitnessIntervals[index + 1] - fitnessIntervals[index]}\n")
+
+            f.write("\nIntervale probabilitati selectie:\n")
+            for index, interval in enumerate(fitnessIntervals):
+                if index % 10 == 0:
+                    f.write("\n")
+                f.write(f"{interval}    ")
+            f.write("\n\n")
+
         for probability in individualProbability:
-            individualIndex += 1
             selectedIndividual = executeSelection(probability)
+
+            if ok == 0:
+                f.write(f"u = {probability} selectam cromozomul {selectedIndividual}\n")
+
             newGeneration[individualIndex] = oldGeneration[selectedIndividual]
+            individualIndex += 1
         
+        if ok == 0:
+            f.write("\n\nDupa selectie:\n")
+            for index, individual in enumerate(newGeneration.values()):
+                f.write(f"      {index}: {individual[2]} x = {individual[0]} f = {individual[1]}\n")
+
         # Generarea unor noi probabilitati pentru a testa daca un individ este apt pentru any crossover sau mutation
         crossoverToBe = []
         individualProbability = generateIndividualProbability(len(newGeneration))
-
+        if ok == 0:
+            f.write(f"\n\nProbabilitatea de incrucisare {crossoverProbability}: \n")
         for index, candidate in enumerate(newGeneration):
+            if ok == 0:
+                f.write(f"      {index}: {newGeneration[candidate][2]} u = {individualProbability[index]}")
             if individualProbability[index] <= crossoverProbability:
+                if ok == 0:
+                    f.write(f" < {crossoverProbability}  participa")
                 crossoverToBe.append(candidate)
-
+            if ok == 0:
+                f.write("\n")
+        
         if len(crossoverToBe) > 1:
             # Realizarea incrucisarii intre membrii selectati
             noCandidates = len(crossoverToBe)
             lastCandidate = -1
 
-            if noCandidates % 3 == 1:
+            if noCandidates % 2 == 1:
                 lastCandidate = -3
                 element1, element2 = crossoverToBe[lastCandidate], crossoverToBe[lastCandidate + 1]
                 # actualizare date generatie
                 newGeneration[element1], newGeneration[element2] = executeCrossover(element1, element2)
                 
-                element1, element2 = crossoverToBe[lastCandidate + 1], crossoverToBe[lastCandidate + 2]
+                element1, element2 = crossoverToBe[lastCandidate + 2], crossoverToBe[0]
                 # actualizare date generatie
                 newGeneration[element1], newGeneration[element2] = executeCrossover(element1, element2)
 
-            for element1, element2 in zip(crossoverToBe[:lastCandidate:2], crossoverToBe[1:lastCandidate:2]):
+            crossover1, crossover2 = crossoverToBe[:lastCandidate:2], crossoverToBe[1::2]
+
+            for element1, element2 in zip(crossover1, crossover2):
                 newGeneration[element1], newGeneration[element2] = executeCrossover(element1, element2)
+        else:
+            if ok == 0:
+                f.write("Recombinarea cu el insusi denota acelasi rezultat\n")
         
+        if ok == 0:
+            f.write("\n\nDupa recombinare:\n")
+            for index, individual in enumerate(newGeneration.values()):
+                f.write(f"      {index}: {individual[2]} x = {individual[0]} f = {individual[1]}\n")
+            
+            f.write(f"\n\nProbabilitate de mutatie pentru fiecare gena {mutationProbability}\n")
+            f.write("Au fost modificati cromozomii:\n")
+            
         mutationToBe = []
-        individualProbability = generateIndividualProbability(len(newGeneration))
+        # individualProbability = generateIndividualProbability(len(newGeneration))
 
         for index, candidate in enumerate(newGeneration):
-            if individualProbability[index] <= mutationProbability:
-                newGeneration[candidate] = executeMutation(candidate)
+            print(newGeneration[candidate])
+            newGeneration[candidate], modified = executeMutation(candidate)
+            print(newGeneration[candidate], "after")
+            if modified == True:
+                mutationToBe.append(candidate)
         
-        population += 1
-        print(len(newGeneration), max(newGeneration.items(), key=lambda x:x[1][1]))
+        if ok == 0:
+            for i in range(len(mutationToBe)):
+                f.write(f"{mutationToBe[i]}\n")
+
+            f.write("\nDupa mutatie: \n")
+            for index, individual in enumerate(newGeneration.values()):
+                f.write(f"      {index}: {individual[2]} x = {individual[0]} f = {individual[1]}\n")
+
+            f.write("\nEvolutia maximului: \n")
+
+        # population += 1
+        # criteriul elitist, gasirea individului cu cea mai mare valoare a functiei de fit
+        eliteIndividual = max(oldGeneration.items(), key=lambda x : x[1][1])
+        
+        newGeneration[population] =  eliteIndividual[1]
+        currentMaximum = max(newGeneration.values(), key=lambda x:x[1])[1]
+        maximum.append(currentMaximum)
+
+        f.write(f"{currentMaximum}\n")
+
+    f.close()
+    return maximum
 
 if __name__ == "__main__":
     main()
