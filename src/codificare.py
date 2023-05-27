@@ -4,30 +4,25 @@ def calculeazaTO(a, l, d, value):
     # pentru value - nr real, trebuie gasit index-ul bin-ului de lungime d
     # cuprins in intervalul [a, b], in care acesta se afla
     # si transformat in sir binar
-    index = None
-    no_of_bins = 2**l
-
-    # cautare binara a capatului din stanga al fiecarui bin, avand pasul d 
-    left = a
-    right = a + (no_of_bins - 1) * d
-
-    while left < right:
-        mij = left + ((right - a) - (left - a)) / 2
-
-        if value > mij:
-            left = mij + d
-            index = (left - a) / d
-        else:
-            right = mij - d
 
     # formatare rezultat: sir binar de lungime l
-    result = floor(index)
+    result = floor((value - a) / d)
     return bin(result)[2:].zfill(l)
 
 def calculeazaFROM(a, l, d, value):
     value = int(value, 2)
 
     return float(format(a + value * d, f'.{l}f'))
+
+def codeConditions(a, b, p):
+    # trebuie sa stabilim param de discretizare
+    # l = nr de biti folositi pentru a reprezenta numerele
+    l = ceil(log2((b - a)*(10**p)))
+
+    # d pasul de discretizare pentru intervalul [a, b]
+    d = (b - a)/(2**l)
+
+    return l, d
 
 def main():
     result = []
@@ -40,12 +35,7 @@ def main():
     p = int(input())
     m = int(input())
 
-    # trebuie sa stabilim param de discretizare
-    # l = nr de biti folositi pentru a reprezenta numerele
-    l = ceil(log2((b - a)*(10**p)))
-
-    # d pasul de discretizare pentru intervalul [a, b]
-    d = (b - a)/(2**l)
+    l, d = codeConditions(a, b, p)
 
     for _ in range(m):
         message = input()
