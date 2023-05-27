@@ -70,6 +70,10 @@ def crossover(cromozom1, cromozom2, punctRupere):
 
     return result1, result2
 
+# def crossover2(cromozom1, cromozom2, punctRupere1, punctRupere2):
+#     result1 = cromozom1[:punctRupere1] + cromozom2[punctRupere1:punctRupere2] + cromozom1[punctRupere2:]
+#     result2 = cromozom2[:punctRupere1] + cromozom1[punctRupere1:punctRupere2] + cromozom2[punctRupere2:]
+
 def main(population, a, b, coef_a, coef_b, coef_c, precision, crossoverProbability, mutationProbability, epochs):
     file_path = "Evolutie.txt"
     f = open(file_path, "w")
@@ -151,7 +155,7 @@ def main(population, a, b, coef_a, coef_b, coef_c, precision, crossoverProbabili
         individualIndex = 0
         # Am trecut automat individul cu functia de fit cea mai mare in generatia urmatoare
         # pentru a asigura cel putin egalitatea intre generatii
-        population -= 1
+        # population -= 1
 
         # Stabilirea intervalelor de selectie
         fitnessIntervals = getSelectionIntervals([fitness[1] for fitness in oldGeneration.values()])
@@ -218,10 +222,13 @@ def main(population, a, b, coef_a, coef_b, coef_c, precision, crossoverProbabili
 
             for element1, element2 in zip(crossover1, crossover2):
                 newGeneration[element1], newGeneration[element2] = executeCrossover(element1, element2)
-        else:
+        elif len(crossoverToBe) == 1:
             if ok == 0:
                 f.write("Recombinarea cu el insusi denota acelasi rezultat\n")
-        
+        else:
+            if ok == 0:
+                f.write("Nu au fost selectate elemente pentru incrucisare\n")
+
         if ok == 0:
             f.write("\n\nDupa recombinare:\n")
             for index, individual in enumerate(newGeneration.values()):
